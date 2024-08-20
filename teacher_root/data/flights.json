@@ -1,0 +1,11 @@
+{
+  "flights": [
+    {
+      "flightNumber": "FL123",
+      "capacity": 180,
+      "data": "2024-09-01",
+      "time": "15:00",
+      "passengers": []
+    }
+  ]
+}
