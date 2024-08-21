@@ -24,13 +24,31 @@ const server = http.createServer((req, res) => {
                 res.end('Internal server error');
                 return;
             }
+            // Adjust the sanitizeHtml configuration to allow essential tags
+            let sanitizedHtml = sanitizeHtml(data, {
+                allowedTags: [
+                    'doctype', 'html', 'head', 'meta', 'title', 'link', 'body',
+                    'h1', 'p', 'b', 'i', 'em', 'strong', 'a'
+                ],
+                allowedAttributes: {
+                    'a': ['href'],
+                    'meta': ['charset', 'name', 'content'],
+                    'link': ['rel', 'href'],
+                },
+                // Allow doctype declaration
+                allowedSchemesByTag: {
+                    'link': ['http', 'https', 'data'],
+                    'meta': []
+                },
+                parser: {
+                    lowerCaseTags: false, // Prevents sanitizing lowercased tags
+                    lowerCaseAttributeNames: false // Prevents sanitizing lowercased attributes
+                }
+            });
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/html');
+            res.end(sanitizedHtml);
         });
-        // let unsanitizedHtml = '<h1>About Me</h1><script>alert(`xss`)</script>'
-        let sanitizedHtml = sanitizeHtml(data, {
-        });
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html');
-        res.end(sanitizedHtml);
     } else {
         res.statusCode = 404;
         res.setHeader('Content-Type', 'text/plain');
