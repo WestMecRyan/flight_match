@@ -1,5 +1,7 @@
 const http = require('http');
 const sanitizeHtml = require('sanitize-html');
+const fs = require('fs');
+const path = require('path');
 const port = 3000;
 const server = http.createServer((req, res) => {
     // we're going to set a status code
@@ -12,18 +14,38 @@ const server = http.createServer((req, res) => {
         res.end("Hello, World\n");
     }
     else if (req.method === "GET" && req.url === "/about") {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/html');
-        res.end("<h1>About Me</h1><p>my name is Ryan Morales</p>");
+        const filePath = path.join(__dirname, 'about.html');
+
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                res.statusCode = 500;
+                res.setHeader('Content-Type', 'text/plain');
+                res.end("Internal Server Error");
+                return;
+            }
+            let sanitizedHtml = sanitizeHtml(data,
+                {
+                    allowedTags: ['h1', 'p', 'b', 'i', 'em', 'strong', 'a'],
+                    allowedAttributes: {
+                        'a': ['href']
+                    }
+                }
+            );
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'text/html');
+            res.end(sanitizedHtml);
+        });
     }
     else if (req.method === "GET" && req.url === "/attack") {
-        let unsanitizedHtml ="<p>some html</p><script>alert(\"you're under attack\")</script>"
-        let sanitizedHtml = sanitizeHtml(unsanitizedHtml, {
-            allowedTags: ['h1', 'p', 'b', 'i', 'em', 'strong', 'a'],
-            allowedAttributes: {
-                'a': ['href']
+        let unsanitizedHtml = "<p>some html</p><script>alert(\"you're under attack\")</script>"
+        let sanitizedHtml = sanitizeHtml(unsanitizedHtml,
+            {
+                allowedTags: ['h1', 'p', 'b', 'i', 'em', 'strong', 'a'],
+                allowedAttributes: {
+                    'a': ['href']
+                }
             }
-        });
+        );
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/html');
         res.end(unsanitizedHtml);
