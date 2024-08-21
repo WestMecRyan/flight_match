@@ -1,14 +1,12 @@
-// branch name build-http-server
-// use the built in NodeJS http module
 const http = require('http');
-// initialize a port
 const port = 3000;
-// initialize a http server using the createServer method
-// pass an arrow function with the req(uest) and res(ponse) objects
-const server = http.createServer((req, res) => { });
-
-// open the port on the server with the listen method
-// pass a port as argument one, then pass an arrow function that will log that the server is running
-server.listen(port, () => {
-    console.log(`Server running at ${port}`);
+const server = http.createServer((req, res) => {
+    // set the http status code of the response to 200 ok
+    res.statusCode = 200;
+    // set a content type of text/plain which tells the clielt the type of data being sent
+    res.setHeader('Content-Type', 'text/plain');
+    // the server ends the cycle by res(ponding) with a string of hello world and a new line break \n
+    res.end('Hello, World!\n');
 });
+server.listen(port, () => {
+console.log(`Server running at ${port}`);});
