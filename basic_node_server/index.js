@@ -1,6 +1,9 @@
 const http = require('http');
-// install and require sanitize-html for sanitizing the html sent back to the client
 const sanitizeHtml = require('sanitize-html');
+// require the fs module
+const fs = require('fs');
+// require the path module
+const path = require('path');
 const port = 3000;
 const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/') {
@@ -10,20 +13,24 @@ const server = http.createServer((req, res) => {
     }
 
     else if (req.method === 'GET' && req.url === '/about') {
-        // unsanitize html that could come from user input to server
-        let unsanitizedHtml = '<h1>About Me</h1><script>alert(`xss`)</script>'
-        // modify the unsanitized html to sanitized html
-        let sanitizedHtml = sanitizeHtml(unsanitizedHtml, {
-            // allowedTags: ['h1', 'p', 'b', 'i', 'em', 'strong', 'a'],
-            // allowedAttributes: {
-            //     'a': ['href']
-            // }
+        // set the file path to the html you want to use with path.join and __dirname
+        const filePath = path.join(__dirname, 'about.html');
+        // read the html with readFile method, pass the filePath, the utf8 encoding and a callback
+        // the call back passes an error object and a data object
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                res.statusCode = 500;
+                res.setHeader('Content-Type', 'text/plain');
+                res.end('Internal server error');
+                return;
+            }
+        });
+        // let unsanitizedHtml = '<h1>About Me</h1><script>alert(`xss`)</script>'
+        let sanitizedHtml = sanitizeHtml(data, {
         });
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/html');
-        // add an xss script to demonstrate how cross site scripting can add malicious code
-        // res.end(sanitizedHtml);
-        res.end(unsanitizedHtml);
+        res.end(sanitizedHtml);
     } else {
         res.statusCode = 404;
         res.setHeader('Content-Type', 'text/plain');
