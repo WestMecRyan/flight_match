@@ -1,0 +1,20 @@
+{
+  "name": "basic_node_server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "sync": "browser-sync start --proxy \"http://localhost:3000\" --files \"index.js, about.html\"",
+    "all": "concurrently \"npm run dev\" \"npm run sync\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "browser-sync": "^3.0.2",
+    "concurrently": "^8.2.2"
+  }
+}
