@@ -1,4 +1,3 @@
-
 const http = require('http');
 const sanitizeHtml = require('sanitize-html');
 const fs = require('fs');
@@ -11,7 +10,7 @@ const server = http.createServer((req, res) => {
     if (req.method === 'GET' && req.url === '/') {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/plain');
-        res.end("Hello from server!");
+        res.end("Hello from server!!");
     }
     else if (req.method === 'GET' && req.url === '/about') {
         const filePath = path.join(__dirname, 'about.html');
